@@ -102,11 +102,11 @@ public class ImageController {
         List<Comment> comments = commentService.getCommentsByImage(image);
         User user = (User) session.getAttribute("loggeduser");
 
-        String tags = convertTagsToString(image.getTags());
         model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
         model.addAttribute("comments", comments);
         if(user.getId() == image.getUser().getId()){
+            String tags = convertTagsToString(image.getTags());
+            model.addAttribute("tags", tags);
             return "images/edit";
         }else{
             model.addAttribute("editError", error);
@@ -169,18 +169,7 @@ public class ImageController {
         }
     }
 
-    @RequestMapping(value = "/image/{imageId}/{imageTitle}/comments", method = RequestMethod.POST)
-    public String addComment(@RequestParam("comment") String comment, @PathVariable("imageId") Integer imageId, @PathVariable("imageTitle") String imageTitle, Comment newComment, HttpSession session) throws IOException {
 
-        Image image = imageService.getImage(imageId);
-        User user = (User) session.getAttribute("loggeduser");
-        newComment.setUser(user);
-        newComment.setImage(image);
-        newComment.setText(comment);
-        newComment.setCreatedDate(new Date());
-        commentService.addComment(newComment);
-        return "redirect:/images/"+ imageId + "/" + imageTitle;
-    }
 
 
     //This method converts the image to Base64 format
